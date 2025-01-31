@@ -1,0 +1,30 @@
+{
+  "preset": "ts-jest",
+  "verbose": true,
+  "globals": {},
+  "moduleFileExtensions": ["ts", "js", "json"],
+  "transform": {
+    ".(ts|tsx)": [
+      "ts-jest",
+      {
+        "tsconfig": "tsconfig.json",
+        "babelConfig": false
+      }
+    ]
+  },
+
+  "testEnvironment": "node",
+  "collectCoverage": true,
+  "coverageReporters": ["text", "html"],
+  "testRegex": "./tests/(.*).test.ts",
+  "collectCoverageFrom": ["./**/*.(tsx||ts)"],
+  "coverageThreshold": {
+    "global": {
+      "lines": 0,
+      "functions": 0,
+      "branches": 0,
+      "statements": 0
+    }
+  },
+  "testTimeout": 30000
+}

@@ -1,0 +1,27 @@
+clone:
+  depth: full
+image: node:18.12.1
+pipelines:
+  branches:
+    staging:
+      - step:
+          caches:
+            - node
+          script:
+            # This gets executed when merging a PR to dev branch
+            - npm install
+            # We need to compile code, code is typically stored in
+            # a destination directory.
+            # Replace with your own command
+            - npm run build
+            # Finally, we push to Heroku
+            - git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_STAGING_APP_NAME.git staging:master
+    production:
+      - step:
+          caches:
+            - node
+          script:
+            # This gets executed when merging a PR to master branch
+            - npm install
+            - npm run build # or your build cmd for prod
+            - git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_PRODUCTION_APP_NAME.git production:master

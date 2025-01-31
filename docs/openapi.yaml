@@ -1,0 +1,407 @@
+openapi: 3.0.0
+info:
+  title: XRP Wallet
+  description: >-
+    # **Introduction**
+
+
+    This collection contains the API documentation for the XRP Wallet.
+
+
+    # **Overview**
+
+
+    # **Error Codes**
+
+
+    **Custom Status Codes**
+
+
+    10000 - Success  
+
+    10001 - Failure  
+
+    10002 - Retry  
+
+    10003 - Invalid access token
+
+
+    #### **HTTP Status Codes**
+
+
+    200 - Success  
+
+    204 - No content  
+
+    400 - Bad request  
+
+    401 - Unauthorized  
+
+    403 - Forbidden  
+
+    404 - Not found  
+
+    500 - Internal error
+
+
+    #### **Rate limit**
+
+
+    Access to the API is limited to 500 requests / 1 hour / IP.
+
+
+    #### **Resource Terminology**
+
+
+    Model -> Endpoint conventions you will encounter.  
+
+    Example of the resource: `Wallet`
+
+
+    *   GET - Index
+        *   Home page of our resource, fetch collection it.
+        *   `../v1/wallets`
+    *   POST - Store
+        *   Store/create new resource.
+        *   `../v1/wallets`
+    *   GET - Show
+        *   Fetch resource by ID.
+        *   `../v1/wallets/:walletId`
+    *   PUT - Update
+        *   Update the resource by ID.
+        *   `../v1/wallets/:walletId`
+    *   DEL - Delete
+        *   Delete the resource by ID.
+        *   `../v1/wallets/:walletId`
+
+    Any additional non-standard endpoints will be named appropriately and have
+    detailed descriptions such as;
+
+
+    *   POST - Ban Wallet
+        *   Mark the wallet  as banned.
+        *   `../v1/wallets/:walletId/ban`
+
+    **Deployed API Base Ur**l:
+    [https://xrp-wallet-be.herokuapp.com/](https://xrp-wallet-be.herokuapp.com/)
+  version: 1.0.0
+  contact: {}
+servers:
+  - url: https://xrp-wallet-be-staging.herokuapp.com/v1
+paths:
+  /wallets:
+    summary: This endpoint is used to login the wallet  or create account if he doesn't exists
+    description: This endpoint is used to login the wallet  or create account if he doesn't exists
+    post:
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deviceId
+                - deviceName
+                - osName
+                - osVersion
+                - password
+              properties:
+                deviceId:
+                  type: string
+                  example: "SN10101292"
+                deviceName:
+                  type: string
+                  example: "Iphone X"
+                osName:
+                  type: string
+                  example: "iOS"
+                osVersion:
+                  type: string
+                  example: "13.1"
+                password:
+                  type: string
+                  example: "MyStrongPassword@1"
+
+      responses:
+        "400":
+          description: "Data is missing or invalid data is provided"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                example:
+                  statusCode: 10001
+                  message: "Device ID must be a string, Device ID cannot be empty, Password must be a string, Password field cannot be empty, deviceName must be a string, deviceName field cannot be empty, osName must be a string, osName field cannot be empty, osVersion must be a string, osVersion field cannot be empty, deviceId must be a string, deviceId field cannot be empty"
+        "200":
+          description: "Wallet or device is logged in or created  if he doesn't exists"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: "1000"
+                  message:
+                    type: string
+                    example: "Wallet Registered Successfully"
+                  token:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      transformedWallet:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            example: "642454a3683d3f223ce2dca4"
+                          role:
+                            type: string
+                            example: "wallet "
+                          wallets:
+                            type: array
+                            items:
+                              type: string
+                            example:
+                              - null
+                          stripe_account_id:
+                            type: string
+                            example: ""
+                          createdAt:
+                            type: string
+                            example: "2023-03-29T15:09:23.082Z"
+                          updatedAt:
+                            type: string
+                            example: "2023-03-29T15:09:23.082Z"
+                          _v:
+                            type: number
+                            example: 0
+                      mnemonic:
+                        type: string
+
+                      device:
+                        type: object
+                        properties:
+                          deviceId:
+                            type: string
+                            example: "SN10101292"
+                          deviceName:
+                            type: string
+                            example: "Iphone X"
+                          osName:
+                            type: string
+                            example: "iOS"
+                          osVersion:
+                            type: string
+                            example: "13.1"
+  /auth/login:
+    summary: This endpoint is used to login the wallet
+    description: This endpoint is used to login the wallet
+    post:
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deviceId
+                - password
+              properties:
+                deviceId:
+                  type: string
+                  example: "SN10101292"
+                password:
+                  type: string
+                  example: "MyStrongPassword@1"
+
+      responses:
+        "400":
+          description: "Data is missing or invalid data is provided"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                example:
+                  statusCode: 10001
+                  message: "Device ID must be a string, Device ID cannot be empty, Password must be a string, Password field cannot be empty"
+        "404":
+          description: "Device with provided id is not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                example:
+                  statusCode: 10001
+                  message: "Device ID must be a string, Device ID cannot be empty, Password must be a string, Password field cannot be empty"
+        "200":
+          description: "Wallet or device is logged in or created  if he doesn't exists"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: "1000"
+                  message:
+                    type: string
+                    example: "Wallet Registered Successfully"
+                  data:
+                    type: object
+                    properties:
+                      transformedWallet:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            example: "642454a3683d3f223ce2dca4"
+                          role:
+                            type: string
+                            example: "wallet "
+                          wallets:
+                            type: array
+                            items:
+                              type: string
+                            example:
+                              - null
+                          stripe_account_id:
+                            type: string
+                            example: ""
+                          createdAt:
+                            type: string
+                            example: "2023-03-29T15:09:23.082Z"
+                          updatedAt:
+                            type: string
+                            example: "2023-03-29T15:09:23.082Z"
+                          _v:
+                            type: number
+                            example: 0
+                      mnemonic:
+                        type: string
+
+                      device:
+                        type: object
+                        properties:
+                          deviceId:
+                            type: string
+                            example: "SN10101292"
+                          deviceName:
+                            type: string
+                            example: "Iphone X"
+                          osName:
+                            type: string
+                            example: "iOS"
+                          osVersion:
+                            type: string
+                            example: "13.1"
+  /auth/me:
+    get:
+      description: Endpoin that is used to get the logged in wallet
+      tags:
+        - Authentication
+        - Wallet
+      security:
+        - BearerAuth: []
+      responses:
+        "401":
+          description: Token is not provided
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    example: "10001"
+                  message:
+                    type: string
+                    example: "Token is missing"
+        "200":
+          description: Fetched wallet  authenticated wallet  data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    example: "10000"
+                  message:
+                    type: string
+                    example: "Wallet retrieved sucessfully"
+                  data:
+                    type: object
+                    properties:
+                      wallet:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            example: "642454a3683d3f223ce2dca4"
+                          role:
+                            type: string
+                            example: "role"
+                          wallets:
+                            type: array
+                            items:
+                              type: string
+                          stripe_account_id:
+                            type: string
+                            example: ""
+                          createdAt:
+                            type: string
+                            example: "2023-03-29T15:09:23.082Z"
+                          updatedAt:
+                            type: string
+                            example: "2023-03-29T15:09:23.082Z"
+  /wallets/device/check/{deviceId}:
+    get:
+      description: Endpoint that is used to check if the device already exists
+      parameters:
+        - name: deviceId
+          schema:
+            type: string
+            example: SN10101292
+          in: path
+          required: true
+      responses:
+        "200":
+          description: When the document is found or not
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    example: "10000"
+                  data:
+                    type: object
+                    properties:
+                      found:
+                        type: boolean
+                        example:
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
